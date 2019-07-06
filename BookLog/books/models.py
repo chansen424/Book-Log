@@ -11,13 +11,19 @@ class Book(models.Model):
 
 class AuthorManager(models.Manager):
     def create_author(self, first_name, last_name):
-        return self.create(first_name=first_name, last_name=last_name)
+        f_name = first_name.lower()
+        l_name = last_name.lower()
+        return self.create(first_name=f_name, last_name=l_name)
 
     def get_by_name(self, first_name, last_name):
-        return self.filter(first_name=first_name, last_name=last_name).first()
+        f_name = first_name.lower()
+        l_name = last_name.lower()
+        return self.filter(first_name=f_name, last_name=l_name).first()
 
     def author_exists(self, first_name, last_name):
-        return self.filter(first_name=first_name, last_name=last_name).exists()
+        f_name = first_name.lower()
+        l_name = last_name.lower()
+        return self.filter(first_name=f_name, last_name=l_name).exists()
 
 
 class Author(models.Model):
@@ -28,7 +34,9 @@ class Author(models.Model):
     objects = AuthorManager()
 
     def __str__(self):
-        return self.first_name + ' ' + self.last_name
+        f_name = self.first_name.capitalize()
+        l_name = self.last_name.capitalize()
+        return f_name + ' ' + l_name
 
     def add_to_works(self, book):
         self.works.add(book)
