@@ -16,6 +16,9 @@ class AuthorManager(models.Manager):
     def get_by_name(self, first_name, last_name):
         return self.filter(first_name=first_name, last_name=last_name).first()
 
+    def author_exists(self, first_name, last_name):
+        return self.filter(first_name=first_name, last_name=last_name).exists()
+
 
 class Author(models.Model):
     first_name = models.CharField(max_length=30)
@@ -26,3 +29,7 @@ class Author(models.Model):
 
     def __str__(self):
         return self.first_name + ' ' + self.last_name
+
+    def add_to_works(self, book):
+        self.works.add(book)
+        self.save()

@@ -1,9 +1,21 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.1.6/css/uikit.min.css" />
 
+<form action="{% url 'books:add_book' %}" method="post">
+    {% csrf_token %}
+    <label for="title">Title</label>
+    <input type="text" name="title" id="title" value="">
+    <br>
+
+    <label for="author">Author</label>
+    <input type="text" name="author" id="author" value="">
+    
+    <input type="submit" value="Add">
+</form>
+
 {% for book in books %}
     <div>
         <div class="">
-            <a class='uk-link-reset' href="{% url 'detail' book.id %}">
+            <a class='uk-link-reset' href="{% url 'books:detail' book.id %}">
                 <h3 class="uk-card-title"><span class="uk-link-heading">{{ book }} by {{ book.writer }}</span></h3>
             </a>
         </div>
