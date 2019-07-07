@@ -41,13 +41,11 @@ def add_book(request):
         # Author exists. Get it.
         author = Author.objects.get_by_name(first_name, last_name)
 
-        # TODO: Check if a book by that title from this author exists.
-        # If it does, redirect or raise an error
-
-    # Create Book
-    book = Book.objects.create(title=title, writer=author)
-
-    # Add the Book to the Author's works.
-    author.add_to_works(book)
+    if not Book.objects.book_exists(title, author):
+        # Book does not exist. Create it.
+        book = Book.objects.create_book(title, author)
+        
+        # Add the Book to the Author's works.
+        author.add_to_works(book)
 
     return HttpResponseRedirect(reverse('books:index'))
