@@ -43,31 +43,36 @@
         <p id="add_failed_msg">You did something wrong.</p>
     </div>
 
-    <button id="submit_book" class="ui submit button" type="submit" value="Add">Add</button>
+    <button id="submit_book" class="medium ui submit button" type="submit" value="Add">Add</button>
 </div>
 
-<div class="ui four stackable cards">
+<div style="margin-top: 10px;" class="ui four stackable cards">
 {% for book in books %}
-    <div class="card">
-        <div class="image">
-            {% if book.image_url is None%}
-            <div class="ui placeholder">
-                <div class="square image"></div>
-            </div>
-            {% else %}
-            <img src="{{ book.image_url }}">
-            {% endif %}
-        </div>
 
+    <a class="ui card" href="{% url 'books:detail' book.id %}">
+        
         <div class="content">
-            <a class='uk-link-reset' href="{% url 'books:detail' book.id %}">{{ book }}</a>
-            {{ book.writer }}
+            <div class="header">{{ book }}</div>
+            <div class="meta">
+                <span>{{ book.writer }}</span>
+            </div>
+            {% if book.summary == "" %}
+                <div class="ui placeholder description">
+                    <div class="paragraph">
+                        <div class="line"></div>
+                        <div class="line"></div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="description">
+                    {{ book.summary }}
+                </div>
+            {% endif %}
+
         </div>
 
-        <div class="extra content">
-            {{ book.summary }}
-        </div>
-    </div>
+    </a>
+
 {% endfor %}
 </div>
 

@@ -32,7 +32,7 @@ class BookManager(models.Manager):
 class Book(models.Model):
     title = models.CharField(max_length=100, unique=False)
     writer = models.ForeignKey('Author', on_delete=models.CASCADE, default=None)
-    summary = models.CharField(max_length=300, default="This book has no summary.")
+    summary = models.CharField(max_length=300, default="")
     image_url = models.URLField(null=True, default=None)
 
     objects = BookManager()
