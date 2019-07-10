@@ -1,37 +1,50 @@
 {% load static %}
 
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+</head>
+
 {% block style %}
 <link rel="stylesheet" href="{% static 'semantic-ui/semantic.css' %}" />
 {% endblock %}
 
 {% include 'include/header.html' %}
-<form style="padding:5px" class="ui form" action="{% url 'books:add_book' %}" method="post" >
-    {% csrf_token %}
+<div id="add_book_form" style="padding:5px" class="ui form success error">
         
-        <div class="three fields">
-            <div class="field">
-                <label>Title</label>
-                <input type="text" name="title" id="title" placeholder="Title" value="">
-            </div>
-
-            <div class="field">
-                <label>Author</label>
-                <input type="text" name="author" id="author" placeholder="Author" value="">
-            </div>
-
-            <div class="field">
-                <label>Image</label>
-                <input type="text" name="image" id="image" placeholder="Image URL" value="">
-            </div>
+    <div class="three fields">
+        <div class="field">
+            <label>Title</label>
+            <input type="text" name="title" id="title" placeholder="Title" value="">
         </div>
 
         <div class="field">
-            <label>Summary</label>
-            <textarea name="summary" id="summary" rows="3" placeholder="Summarize the book...briefly"></textarea>
+            <label>Author</label>
+            <input type="text" name="author" id="author" placeholder="Author" value="">
         </div>
 
-        <button class="ui submit button" type="submit" value="Add">Add</button>
-</form>
+        <div class="field">
+            <label>Image</label>
+            <input type="text" name="image" id="image" placeholder="Image URL" value="">
+        </div>
+    </div>
+
+    <div class="field">
+        <label>Summary</label>
+        <textarea name="summary" id="summary" rows="3" placeholder="Summarize the book...briefly"></textarea>
+    </div>
+
+    <div id="add_successful" class="ui success message">
+        <div class="header">Book Added</div>
+        <p>Please refresh to see the changes.</p>
+    </div>
+
+    <div id="add_failed" class="ui error message">
+        <div class="header">Error Occurred</div>
+        <p id="add_failed_msg">You did something wrong.</p>
+    </div>
+
+    <button id="submit_book" class="ui submit button" type="submit" value="Add">Add</button>
+</div>
 
 <div class="ui four stackable cards">
 {% for book in books %}
@@ -57,3 +70,50 @@
     </div>
 {% endfor %}
 </div>
+
+<script>
+    $(document).ready(function(){
+        $("#add_successful").hide();
+        $("#add_failed").hide();
+    });
+
+    $(document).ready(function(){
+        $("#add_book_form").on("click", "#submit_book",function(){
+            var title = $("input[name='title']").val();
+            var author = $("input[name='author']").val();
+            var image = $("input[name='image']").val();
+            var summary = $("textarea[name='summary']").val();
+
+            $.ajax({
+                url: "{% url 'books:add_book' %}",
+                method: "post",
+                data: {
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    title: title,
+                    author: author,
+                    summary: summary,
+                    image: image
+                },
+                success: function(data) {
+                    if (data.status == 200) {
+                        $("input[name='title']").val("");
+                        $("input[name='author']").val("");
+                        $("input[name='image']").val("");
+                        $("input[name='summary']").val("");
+
+                        // Show success message
+                        $("#add_successful").show();
+                        $("#add_failed").hide();
+                    } else {
+                        if(data.msg){
+                            // Show error message
+                            $("#add_failed_msg").text(data.msg);
+                            $("#add_failed").show();
+                            $("#add_successful").hide();
+                        }
+                    }
+                }
+            });
+        });
+    });
+</script>

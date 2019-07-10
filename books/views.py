@@ -1,4 +1,4 @@
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 
@@ -27,6 +27,9 @@ def detail(request, book_id):
     )
 
 def add_book(request):
+    payload = {"status": 200}
+    msg = ""
+
     title = request.POST['title']
     author = request.POST['author']
     summary = request.POST['summary']
@@ -34,6 +37,12 @@ def add_book(request):
 
     # Split the input into first and last name
     split_name_array = author.split()
+    if len(split_name_array) != 2:
+        msg = "Make sure author has first and last name."
+        payload["status"] = 400
+        payload["msg"] = msg
+        return JsonResponse(payload)
+
     first_name = split_name_array[0]
     last_name = split_name_array[1]
 
@@ -58,5 +67,9 @@ def add_book(request):
         
         # Add the Book to the Author's works.
         author.add_to_works(book)
+    else:
+        msg = "This book has already been logged."
+        payload["msg"] = msg
+        payload["status"] = 400
 
-    return HttpResponseRedirect(reverse('books:index'))
+    return JsonResponse(payload)
