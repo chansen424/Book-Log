@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% include 'include/header.html' %}
-<div id="add_book_form" style="padding:5px" class="ui form success error">
+<div id="add_book_form" style="padding:5px" class="ui form error">
         
     <div class="three fields">
         <div class="field">
@@ -31,11 +31,6 @@
     <div class="field">
         <label>Summary</label>
         <textarea name="summary" id="summary" rows="3" placeholder="Summarize the book...briefly"></textarea>
-    </div>
-
-    <div id="add_successful" class="ui success message">
-        <div class="header">Book Added</div>
-        <p>Please refresh to see the changes.</p>
     </div>
 
     <div id="add_failed" class="ui error message">
@@ -78,7 +73,6 @@
 
 <script>
     $(document).ready(function(){
-        $("#add_successful").hide();
         $("#add_failed").hide();
     });
 
@@ -101,20 +95,12 @@
                 },
                 success: function(data) {
                     if (data.status == 200) {
-                        $("input[name='title']").val("");
-                        $("input[name='author']").val("");
-                        $("input[name='image']").val("");
-                        $("input[name='summary']").val("");
-
-                        // Show success message
-                        $("#add_successful").show();
-                        $("#add_failed").hide();
+                        window.location.reload();
                     } else {
                         if(data.msg){
                             // Show error message
                             $("#add_failed_msg").text(data.msg);
                             $("#add_failed").show();
-                            $("#add_successful").hide();
                         }
                     }
                 }
