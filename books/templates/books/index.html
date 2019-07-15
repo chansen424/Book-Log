@@ -2,10 +2,12 @@
 
 <head>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="{% static 'clamp/clamp.min.js' %}"></script>
 </head>
 
 {% block style %}
 <link rel="stylesheet" href="{% static 'semantic-ui/semantic.css' %}" />
+<link rel="stylesheet" href="{% static 'css/main.css' %}" />
 {% endblock %}
 
 {% include 'include/header.html' %}
@@ -46,6 +48,9 @@
 
     <a class="ui card" href="{% url 'books:detail' book.id %}">
         
+        <div class="image">
+            <img src="{{ book.image_url }}">
+        </div>
         <div class="content">
             <div class="header">{{ book }}</div>
             <div class="meta">
@@ -63,7 +68,6 @@
                     {{ book.summary }}
                 </div>
             {% endif %}
-
         </div>
 
     </a>
@@ -76,6 +80,10 @@
         $("#add_failed").hide();
     });
 
+    $(".description").each(function(index, element) {
+        $clamp(element, {clamp: 4, useNativeClamp: false});
+    });
+    
     $(document).ready(function(){
         $("#add_book_form").on("click", "#submit_book",function(){
             var title = $("input[name='title']").val();

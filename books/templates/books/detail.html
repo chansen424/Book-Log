@@ -1,2 +1,42 @@
-<h3>{{ book }}</h3>
-<h4>{{ book.writer }}</h4>
+{% load static %}
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="{% static 'semantic-ui/semantic.js' %}"></script>
+</head>
+
+{% block style %}
+    <link rel="stylesheet" href="{% static 'semantic-ui/semantic.css' %}" />
+{% endblock %}
+
+{% block content %}
+<img class="ui medium image" src="{{ book.image_url }}">
+<div class="ui top attached tabular menu">
+    <a class="item active" data-tab="book">
+      Book
+    </a>
+    <a class="item" data-tab="author">
+      Author
+    </a>
+</div>
+<div class="ui bottom attached tab segment active" data-tab="book">
+    {% if book.summary == "" %}
+        <p>This book has no summary.</p>
+    {% else %}
+        <p>{{ book.summary }}</p>
+    {% endif %}
+</div>
+<div class="ui bottom attached tab segment" data-tab="author">
+    You know what it is.
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+
+    $('.menu .item')
+        .tab()
+    ;
+
+</script>
+{% endblock %}

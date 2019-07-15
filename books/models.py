@@ -34,6 +34,8 @@ class Book(models.Model):
     writer = models.ForeignKey('Author', on_delete=models.CASCADE, default=None)
     summary = models.CharField(max_length=300, default="")
     image_url = models.URLField(null=True, default=None)
+    isbn = models.CharField(max_length=13, default=None)
+
 
     objects = BookManager()
 
