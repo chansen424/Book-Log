@@ -1,4 +1,5 @@
 from django.db import models
+import wikipedia
 
 # Create your models here.
 class BookManager(models.Manager):
@@ -77,4 +78,8 @@ class Author(models.Model):
 
     def add_to_works(self, book):
         self.works.add(book)
+        self.save()
+
+    def add_bio(self):
+        self.bio = wikipedia.summary(str(self))
         self.save()

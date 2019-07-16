@@ -4,6 +4,8 @@ from django.urls import reverse
 
 from .models import Author, Book
 
+import wikipedia
+
 def index(request):
     # First 5 books from alphabetically ordered set.
     books = Book.objects.order_by('title')
@@ -52,6 +54,7 @@ def add_book(request):
     if not Author.objects.author_exists(first_name, last_name):
         # Author does not exist. Create it.
         author = Author.objects.create_author(first_name, last_name)
+        author.add_bio()
     else:
         # Author exists. Get it.
         author = Author.objects.get_by_name(first_name, last_name)
