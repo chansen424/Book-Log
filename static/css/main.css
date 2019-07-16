@@ -1,3 +1,15 @@
 body {
     background-color: #FFF;
 }
+
+.author-name {
+    color:grey;
+    font-size: 80%;
+}
+
+#info-container {
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}

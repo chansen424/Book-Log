@@ -34,6 +34,7 @@ def add_book(request):
     author = request.POST['author']
     summary = request.POST['summary']
     image_url = request.POST['image']
+    isbn = request.POST['isbn']
 
     # Split the input into first and last name
     split_name_array = author.split()
@@ -63,6 +64,14 @@ def add_book(request):
             book.summary = summary
         if image_url != '':
             book.image_url = image_url
+        if isbn != '':
+            if Book.objects.isbn_exists(isbn):
+                msg = "A book with this ISBN has already been inputted."
+                payload["msg"] = msg
+                payload["status"] = 400
+                return JsonResponse(payload)
+            else:
+                book.isbn = isbn
         book.save()
         
         # Add the Book to the Author's works.
@@ -71,5 +80,19 @@ def add_book(request):
         msg = "This book has already been logged."
         payload["msg"] = msg
         payload["status"] = 400
+
+    return JsonResponse(payload)
+
+def edit_about_the_author(request):
+    payload = {"status": 200}
+
+    author = request.POST['author']
+    author_name = author.split()
+    author_obj = Author.objects.get(first_name=author_name[0], last_name=author_name[1])
+
+    bio = request.POST['bio']
+
+    author_obj.bio = bio
+    author_obj.save()
 
     return JsonResponse(payload)

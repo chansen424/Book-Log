@@ -7,10 +7,16 @@
 
 {% block style %}
     <link rel="stylesheet" href="{% static 'semantic-ui/semantic.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/main.css' %}" />
 {% endblock %}
 
 {% block content %}
-<img class="ui medium image" src="{{ book.image_url }}">
+<div id="info-container">
+
+<img id="cover" class="ui medium image" src="{{ book.image_url }}">
+<h2>{{ book.title }}
+    <span class="author-name">{{ book.writer }}</span>
+</h2>
 <div class="ui top attached tabular menu">
     <a class="item active" data-tab="book">
       Book
@@ -20,14 +26,52 @@
     </a>
 </div>
 <div class="ui bottom attached tab segment active" data-tab="book">
+    <h3 class="ui dividing header">
+        Summary
+    </h3>
     {% if book.summary == "" %}
         <p>This book has no summary.</p>
     {% else %}
         <p>{{ book.summary }}</p>
     {% endif %}
+    <h3 class="ui dividing header">
+        ISBN
+    </h3>
+    {% if book.isbn == "" %}
+        <p>No ISBN info.</p>
+    {% else %}
+        <p>{{ book.isbn }}</p>
+    {% endif %}
 </div>
 <div class="ui bottom attached tab segment" data-tab="author">
-    You know what it is.
+    <h3 class="ui dividing header">
+        About the Author
+        <i class="pencil alternate icon"></i>
+    </h3>
+    {% if book.writer.bio == "" %}
+        There is no author information.
+    {% else %}
+        {{ book.writer.bio }}
+    {% endif %}
+</div>
+
+<div class="tiny ui modal">
+    <div class="header">Edit "About the Author"</div>
+    <div class="content">
+        <div class="ui form">
+            <h4 class="ui dividing header">Tell us more about this author</h4>
+            <div class="field">
+                <label>About</label>
+                <textarea name="bio" id="bio" rows="3"></textarea>
+            </div>
+        </div>
+    </div>
+    <div class="actions">
+        <div class="ui cancel button">Cancel</div>
+        <div class="ui approve button">Save</div>
+    </div>
+</div>
+
 </div>
 {% endblock %}
 
@@ -36,6 +80,28 @@
 
     $('.menu .item')
         .tab()
+    ;
+
+    $('.tiny.modal')
+        .modal('attach events', '.pencil.icon', 'show')
+        .modal({
+            onApprove: function() {
+                $.ajax({
+                    url: "{% url 'books:edit_about_the_author' %}",
+                    method: "post",
+                    data: {
+                        csrfmiddlewaretoken: '{{ csrf_token }}',
+                        author: '{{ book.writer }}',
+                        bio: $("textarea[name='bio']").val()
+                    },
+                    success: function(data) {
+                        if (data.status == 200) {
+                            window.location.reload();
+                        }
+                    }
+                });
+            }
+        })
     ;
 
 </script>

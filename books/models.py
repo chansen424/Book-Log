@@ -25,6 +25,9 @@ class BookManager(models.Manager):
         formatted_title = self.format_book_title(title)
         return self.filter(title=formatted_title, writer=writer).exists()
 
+    def isbn_exists(self, isbn):
+        return self.filter(isbn=isbn).exists()
+
     def get_book(self, title, writer):
         formatted_title = self.format_book_title(title)
         return self.filter(title=formatted_title, writer=writer).first()
@@ -34,7 +37,7 @@ class Book(models.Model):
     writer = models.ForeignKey('Author', on_delete=models.CASCADE, default=None)
     summary = models.CharField(max_length=300, default="")
     image_url = models.URLField(null=True, default=None)
-    isbn = models.CharField(max_length=13, default=None)
+    isbn = models.CharField(max_length=13, default="")
 
 
     objects = BookManager()
@@ -65,6 +68,7 @@ class Author(models.Model):
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
     works = models.ManyToManyField(Book)
+    bio = models.CharField(max_length=300, default="")
 
     objects = AuthorManager()
 

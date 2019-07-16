@@ -13,7 +13,7 @@
 {% include 'include/header.html' %}
 <div id="add_book_form" style="padding:5px" class="ui form error">
         
-    <div class="three fields">
+    <div class="two fields">
         <div class="field">
             <label>Title</label>
             <input type="text" name="title" id="title" placeholder="Title" value="">
@@ -23,7 +23,13 @@
             <label>Author</label>
             <input type="text" name="author" id="author" placeholder="Author" value="">
         </div>
+    </div>
 
+    <div class="two fields">
+        <div class="field">
+            <label>ISBN</label>
+            <input type="text" name="isbn" id="isbn" placeholder="ISBN" value="">
+        </div>
         <div class="field">
             <label>Image</label>
             <input type="text" name="image" id="image" placeholder="Image URL" value="">
@@ -90,6 +96,7 @@
             var author = $("input[name='author']").val();
             var image = $("input[name='image']").val();
             var summary = $("textarea[name='summary']").val();
+            var isbn = $("input[name='isbn']").val();
 
             $.ajax({
                 url: "{% url 'books:add_book' %}",
@@ -99,7 +106,8 @@
                     title: title,
                     author: author,
                     summary: summary,
-                    image: image
+                    image: image,
+                    isbn: isbn
                 },
                 success: function(data) {
                     if (data.status == 200) {
