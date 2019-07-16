@@ -32,7 +32,7 @@
     {% if book.summary == "" %}
         <p>This book has no summary.</p>
     {% else %}
-        <p>{{ book.summary }}</p>
+        <p>{{ book.summary|linebreaks }}</p>
     {% endif %}
     <h3 class="ui dividing header">
         ISBN
@@ -51,7 +51,7 @@
     {% if book.writer.bio == "" %}
         There is no author information.
     {% else %}
-        {{ book.writer.bio }}
+        {{ book.writer.bio|linebreaks }}
     {% endif %}
 </div>
 
