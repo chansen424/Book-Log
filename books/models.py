@@ -69,7 +69,7 @@ class Author(models.Model):
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
     works = models.ManyToManyField(Book)
-    bio = models.CharField(max_length=300, default="")
+    bio = models.CharField(max_length=500, default="")
 
     objects = AuthorManager()
 

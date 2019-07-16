@@ -99,3 +99,15 @@ def edit_about_the_author(request):
     author_obj.save()
 
     return JsonResponse(payload)
+
+def edit_isbn(request):
+    payload = {"status": 200}
+
+    book_id = int(request.POST['book'])
+    book = Book.objects.get(id=book_id)
+
+    isbn = request.POST['isbn']
+    book.isbn = isbn
+    book.save()
+
+    return JsonResponse(payload)

@@ -15,6 +15,7 @@
 <div id="info-container">
 
 <img id="cover" class="ui medium image" src="{{ book.image_url }}">
+<iframe id="preview" width="371" height="604" type="text/html" frameborder="0" allowfullscreen style="max-width:100%" src="https://read.amazon.com/kp/card?asin={{book.isbn}}&preview=inline&linkCode=kpe&ref_=cm_sw_r_kb_dp_AxLlDb9YE0N7Q" ></iframe>
 <h2>{{ book.title }}
     <span class="author-name">{{ book.writer }}</span>
 </h2>
@@ -37,6 +38,7 @@
     {% endif %}
     <h3 class="ui dividing header">
         ISBN
+        <i id="open-edit-isbn" class="pencil alternate icon"></i>
     </h3>
     {% if book.isbn == "" %}
         <p>No ISBN info.</p>
@@ -73,11 +75,31 @@
     </div>
 </div>
 
+<div id="edit-isbn" class="tiny ui modal">
+    <div class="header">Edit ISBN</div>
+    <div class="content">
+        <div class="ui form">
+            <h4 class="ui dividing header">What ISBN did you want stored?</h4>
+            <div class="field">
+                <input name="isbn" id="isbn">
+            </div>
+        </div>
+    </div>
+    <div class="actions">
+        <div class="ui cancel button">Cancel</div>
+        <div class="ui approve button">Save</div>
+    </div>
+</div>
+
 </div>
 {% endblock %}
 
 {% block scripts %}
 <script>
+
+    $(document).ready(function(){
+        $("#preview").hide();
+    });
 
     $('.menu .item')
         .tab()
@@ -104,6 +126,37 @@
             }
         })
     ;
+
+    $('#edit-isbn')
+        .modal('attach events', '#open-edit-isbn', 'show')
+        .modal({
+            onApprove: function() {
+                $.ajax({
+                    url: "{% url 'books:edit_isbn' %}",
+                    method: "post",
+                    data: {
+                        csrfmiddlewaretoken: '{{ csrf_token }}',
+                        book: '{{ book.id }}',
+                        isbn: $("input[name='isbn']").val()
+                    },
+                    success: function(data) {
+                        if (data.status == 200) {
+                            window.location.reload();
+                        }
+                    }
+                });
+            }
+        })
+    ;
+
+    $('.tiny.modal')
+        .modal('attach events', '.preview-btn', 'show')
+    ;
+
+    $('#cover').on("click", function(){
+        $(this).hide();
+        $("#preview").show();
+    });
 
 </script>
 {% endblock %}
