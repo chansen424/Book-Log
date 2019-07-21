@@ -1,31 +1,40 @@
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, render
+from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 
-from .models import Author, Book
+from .models import Author, Book, Favorites
 
 import wikipedia
 
 def index(request):
-    # First 5 books from alphabetically ordered set.
     books = Book.objects.order_by('title')
-    
-    # [:5] for first 5
 
     return render(
         request,
         'books/index.html',
         {
-            'books': books
+            'books': books,
         }
     )
 
 def detail(request, book_id):
     book = get_object_or_404(Book, pk=book_id)
+    favorited = False
+
+    current_user = request.user
+    if current_user.is_authenticated:
+        favorites = Favorites.objects.get(owner=current_user)
+
+        if favorites.books.filter(id=book_id).exists():
+            favorited = True
+
     return render(
         request,
         'books/detail.html',
-        {'book': book}
+        {'book': book,
+        'favorited': favorited
+        }
     )
 
 def add_book(request):
@@ -109,5 +118,31 @@ def edit_isbn(request):
     isbn = request.POST['isbn']
     book.isbn = isbn
     book.save()
+
+    return JsonResponse(payload)
+
+@login_required
+def add_to_favorites(request):
+    payload = {"status": 200}
+    current_user = request.user
+
+    book_id = int(request.POST['book'])
+    book = Book.objects.get(id=book_id)
+
+    favorites = Favorites.objects.get(owner=current_user)
+    favorites.books.add(book)
+
+    return JsonResponse(payload)
+
+@login_required
+def remove_from_favorites(request):
+    payload = {"status": 200}
+    current_user = request.user
+
+    book_id = int(request.POST['book'])
+    book = Book.objects.get(id=book_id)
+
+    favorites = Favorites.objects.get(owner=current_user)
+    favorites.books.remove(book)
 
     return JsonResponse(payload)

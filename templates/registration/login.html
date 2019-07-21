@@ -1,4 +1,14 @@
+{% load static %}
+
+{% block style %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<link rel="stylesheet" href="{% static 'semantic-ui/semantic.css' %}" />
+<link rel="stylesheet" href="{% static 'css/main.css' %}" />
+{% endblock %}
+
 {% block content %}
+
+{% include 'include/header.html' %}
 
 {% if form.errors %}
   <p>Your username and password didn't match. Please try again.</p>
@@ -13,26 +23,32 @@
   {% endif %}
 {% endif %}
 
-<form method="post" action="{% url 'login' %}">
+<form id="login-form" class="ui form" method="post" action="{% url 'login' %}">
 {% csrf_token %}
-<table>
 
-<tr>
-  <td>{{ form.username.label_tag }}</td>
-  <td>{{ form.username }}</td>
-</tr>
+<div class="field">
+  <label>{{ form.username.label_tag }}</label>
+  <div>{{ form.username }}</div>
+</div>
 
-<tr>
-  <td>{{ form.password.label_tag }}</td>
-  <td>{{ form.password }}</td>
-</tr>
-</table>
+<div class="field">
+  <label>{{ form.password.label_tag }}</label>
+  <div>{{ form.password }}</div>
+</div>
 
-<input type="submit" value="login" />
+<input class="ui button" type="submit" value="Login" />
 <input type="hidden" name="next" value="{{ next }}" />
 </form>
 
 {# Assumes you setup the password_reset view in your URLconf #}
 <p><a href="{% url 'password_reset' %}">Lost password?</a></p>
 
+{% endblock %}
+
+{% block scripts %}
+<script>
+  $(document).ready(function(){
+    $(".acct").hide();
+  });
+</script>
 {% endblock %}

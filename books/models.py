@@ -1,4 +1,10 @@
 from django.db import models
+from django.contrib.auth.models import User
+
+# Signal imports
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
 import wikipedia
 
 # Create your models here.
@@ -83,3 +89,15 @@ class Author(models.Model):
     def add_bio(self):
         self.bio = wikipedia.summary(str(self))
         self.save()
+
+class Favorites(models.Model):
+    owner = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
+    books = models.ManyToManyField(Book)
+
+    def __str__(self):
+        return self.owner.username
+
+    @receiver(post_save, sender=User)
+    def associated_favorite(sender, instance, **kwargs):
+        if not Favorites.objects.filter(owner=instance).exists():
+            Favorites.objects.create(owner=instance)
