@@ -20,6 +20,12 @@
     <span class="author-name">{{ book.writer }}</span> 
     <div class="ui heart rating" {% if favorited is True %}data-rating="1"{% endif %} data-max-rating="1"></div>
 </h2>
+
+<button id="add_to_collection" class="ui labeled icon {% if not request.user.is_authenticated %}disabled {% endif %}button">
+    <i class="plus icon"></i>
+    Add to Collection
+</button>
+
 <div class="ui top attached tabular menu">
     <a class="item active" data-tab="book">
       Book
@@ -59,7 +65,7 @@
     {% endif %}
 </div>
 
-<div class="tiny ui modal">
+<div id="edit-about-author" class="tiny ui modal">
     <div class="header">Edit "About the Author"</div>
     <div class="content">
         <div class="ui form">
@@ -92,6 +98,41 @@
     </div>
 </div>
 
+<div id="choose-collection" class="tiny ui modal">
+    <div class="header">Choose Collection</div>
+    <div class="content">
+        <div class="ui form center aligned basic segment">
+            
+            <button id="create_collection" class="ui labeled icon button">
+                <i class="book icon"></i>
+                Create New Collection
+            </button>
+
+            <div class="ui horizontal divider">
+                Or
+            </div>
+
+            <h4 class="ui header">Choose an existing collection</h4>
+            <div id="existing-collections" class="ui relaxed divided list">
+                {% for collection in user_collections %}
+                <div class="item">
+                    <div class="content">
+                    <a id="{{ collection.id }}" class="choice header"><i class="large book icon"></i> {{ collection.name }}</a>
+                    </div>
+                </div>
+                {% empty %}
+                <p>You have not created any collections yet!</p>
+                {% endfor %}
+            </div>
+            
+        </div>
+    </div>
+    <div class="actions">
+        <div class="ui cancel button">Cancel</div>
+        <div id="add_existing_confirm" class="ui approve button">Confirm</div>
+    </div>
+</div>
+
 </div>
 {% endblock %}
 
@@ -115,7 +156,7 @@
         .tab()
     ;
 
-    $('.tiny.modal')
+    $('#edit-about-author')
         .modal('attach events', '.pencil.icon', 'show')
         .modal({
             onApprove: function() {
@@ -185,6 +226,32 @@
             });
         }
         currently_fav = !currently_fav;
+    });
+
+    $('#choose-collection')
+        .modal('attach events', '#add_to_collection', 'show')
+
+    var selected_collection = "";
+    $('.choice').on("click", function(){
+        selected_collection = $(this).attr('id');
+        console.log(selected_collection);
+    });
+
+    $('#add_existing_confirm').on("click", function(){
+        $.ajax({
+            url: "{% url 'books:add_to_existing_collection' %}",
+            method: "post",
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                book: '{{ book.id }}',
+                collection: selected_collection
+            },
+            success: function(data) {
+                if (data.status == 200) {
+                    window.location.reload();
+                }
+            }
+        });
     });
 
 </script>

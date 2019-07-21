@@ -101,3 +101,8 @@ class Favorites(models.Model):
     def associated_favorite(sender, instance, **kwargs):
         if not Favorites.objects.filter(owner=instance).exists():
             Favorites.objects.create(owner=instance)
+
+class Collection(models.Model):
+    name = models.CharField(max_length=50)
+    owner = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
+    books = models.ManyToManyField(Book)

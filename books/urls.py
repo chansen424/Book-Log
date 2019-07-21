@@ -11,5 +11,6 @@ urlpatterns = [
     path('edit_isbn', views.edit_isbn, name="edit_isbn"),
     path('add_to_favorites', views.add_to_favorites, name="add_to_favorites"),
     path('remove_from_favorites', views.remove_from_favorites, name="remove_from_favorites"),
+    path('add_to_existing_collection', views.add_to_existing_collection, name="add_to_existing_collection"),
 
 ]

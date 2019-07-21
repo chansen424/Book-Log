@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404, render
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 
-from .models import Author, Book, Favorites
+from .models import Author, Book, Collection, Favorites
 
 import wikipedia
 
@@ -29,11 +29,14 @@ def detail(request, book_id):
         if favorites.books.filter(id=book_id).exists():
             favorited = True
 
+        collections = Collection.objects.filter(owner=current_user)
+
     return render(
         request,
         'books/detail.html',
         {'book': book,
-        'favorited': favorited
+        'favorited': favorited,
+        'user_collections': collections
         }
     )
 
@@ -144,5 +147,21 @@ def remove_from_favorites(request):
 
     favorites = Favorites.objects.get(owner=current_user)
     favorites.books.remove(book)
+
+    return JsonResponse(payload)
+
+@login_required
+def add_to_existing_collection(request):
+    payload = {"status": 200}
+
+    book_id = int(request.POST['book'])
+
+    collection_id = int(request.POST['collection'])
+    collection = Collection.objects.get(id=collection_id)
+
+    # Only add if the book is not already in the collection
+    if not collection.books.filter(id=book_id).exists():
+        book = Book.objects.get(id=book_id)
+        collection.books.add(book)
 
     return JsonResponse(payload)
