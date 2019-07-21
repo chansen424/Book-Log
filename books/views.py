@@ -40,6 +40,32 @@ def detail(request, book_id):
         }
     )
 
+@login_required
+def collections(request):
+    current_user = request.user
+    collections = Collection.objects.filter(owner=current_user)
+
+    return render(
+        request,
+        'books/collections.html',
+        {
+            'collections': collections,
+        }
+    )
+
+@login_required
+def favorites(request):
+    current_user = request.user
+    favorites = Favorites.objects.get(owner=current_user)
+
+    return render(
+        request,
+        'books/favorites.html',
+        {
+            'books': favorites.books.iterator(),
+        }
+    )
+
 def add_book(request):
     payload = {"status": 200}
     msg = ""
@@ -162,6 +188,23 @@ def add_to_existing_collection(request):
     # Only add if the book is not already in the collection
     if not collection.books.filter(id=book_id).exists():
         book = Book.objects.get(id=book_id)
+        collection.books.add(book)
+
+    return JsonResponse(payload)
+
+@login_required
+def add_to_new_collection(request):
+    payload = {"status": 200}
+    current_user = request.user
+
+    book_id = int(request.POST['book'])
+    collection_name = request.POST['collection_name']
+
+    # Only create collection and add the book if a collection by the same name does not exist
+    if not Collection.objects.filter(owner=current_user,name=collection_name).exists():
+        book = Book.objects.get(id=book_id)
+        collection = Collection.objects.create(name=collection_name)
+        collection.owner.add(current_user)
         collection.books.add(book)
 
     return JsonResponse(payload)

@@ -133,6 +133,22 @@
     </div>
 </div>
 
+<div id="create-new-collection" class="tiny ui modal">
+    <div class="header">New Collection</div>
+    <div class="content">
+        <div class="ui form">
+            <h4 class="ui dividing header">Name your new collection</h4>
+            <div class="field">
+                <input name="collection-name" id="collection-name">
+            </div>
+        </div>
+    </div>
+    <div class="actions">
+        <div class="ui cancel button">Cancel</div>
+        <div id="new_collection_confirm" class="ui approve button">Confirm</div>
+    </div>
+</div>
+
 </div>
 {% endblock %}
 
@@ -250,6 +266,23 @@
                 if (data.status == 200) {
                     window.location.reload();
                 }
+            }
+        });
+    });
+
+    $('#create-new-collection')
+        .modal('attach events', '#create_collection', 'show')
+
+    $('#new_collection_confirm').on("click", function(){
+        let collection_name = $('#collection-name').val();
+
+        $.ajax({
+            url: "{% url 'books:add_to_new_collection' %}",
+            method: "post",
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                book: '{{ book.id }}',
+                collection_name: collection_name
             }
         });
     });

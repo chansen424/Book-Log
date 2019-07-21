@@ -103,6 +103,6 @@ class Favorites(models.Model):
             Favorites.objects.create(owner=instance)
 
 class Collection(models.Model):
-    name = models.CharField(max_length=50)
-    owner = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
+    name = models.CharField(max_length=50, unique=False)
+    owner = models.ManyToManyField(User)
     books = models.ManyToManyField(Book)

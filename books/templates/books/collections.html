@@ -1,0 +1,50 @@
+{% load static %}
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="{% static 'semantic-ui/semantic.js' %}"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'semantic-ui/semantic.css' %}" />
+<link rel="stylesheet" href="{% static 'css/main.css' %}" />
+{% endblock %}
+
+{% include 'include/header.html' %}
+
+<div class="ui styled fluid accordion">
+{% for collection in collections %}
+    <div class="{% if forloop.counter == 1 %}active {% endif %}title">
+        <i class="dropdown icon"></i>
+        {{ collection.name }}
+    </div>
+    <div style="margin-top: 10px;" class="{% if forloop.counter == 1 %}active {% endif %}content">
+
+        <div class="ui four stackable cards">
+        {% for book in collection.books.iterator %}
+            <a class="ui card" href="{% url 'books:detail' book.id %}">
+                
+                <div class="image">
+                    <img src="{{ book.image_url }}">
+                </div>
+                <div class="content">
+                    <div class="header">{{ book }}</div>
+                    <div class="meta">
+                        <span>{{ book.writer }}</span>
+                    </div>
+                </div>
+
+            </a>
+        {% endfor %}
+    </div>
+
+    </div>
+{% endfor %}
+</div>
+
+<script>
+    $(document).ready(function(){
+        $('.ui.accordion').accordion();
+    });
+</script>

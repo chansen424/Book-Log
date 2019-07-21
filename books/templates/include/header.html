@@ -1,12 +1,44 @@
-<h1 style="text-align: center" class="ui header">
-    Chris' Books
-    {% if request.user.is_authenticated %}
-        <a href="{% url 'logout' %}" style="float: right; margin-top:5px;" class="ui button acct">
-            Logout
-        </a>
-    {% else %}
-        <a href="{% url 'login' %}" style="float: right; margin-top:5px;" class="ui button acct">
-            Login
-        </a>
-    {% endif %}
-</h1>
+{% load static %}
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="{% static 'semantic-ui/semantic.js' %}"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<div class="ui text menu">
+    <h1 style="margin-left: 5px;" class="item ui header">
+        <img src="https://kawaii.kawaii.at/img/solid-red-fabric-Robert-Kaufman-USA-Red-179485-1.JPG">
+        <a style="color: black; margin-left: 5px;" href="{% url 'books:index'%}">Chris' Books</a>
+    </h1>
+    <div style="float: right"class="ui right dropdown item">
+        <div class="text">Options</div>
+        <i class="dropdown icon"></i>
+        <div class="menu">
+            {% if request.user.is_authenticated %}
+            <a href="{% url 'books:collections' %}" class="item">
+                <i class="book icon"></i>
+                Collections
+            </a>
+
+            <a href="{% url 'books:favorites' %}" class="item">
+                <i class="heart icon"></i>
+                Favorites
+            </a>
+            
+            <a href="{% url 'logout' %}" class="item">
+                Logout
+            </a>
+            {% else %}
+            <a href="{% url 'login' %}" style="float: right; margin-top:5px;" class="item">
+                Login
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function(){
+        $('.ui.dropdown').dropdown();
+    });
+</script>
