@@ -30,6 +30,8 @@ def detail(request, book_id):
             favorited = True
 
         collections = Collection.objects.filter(owner=current_user)
+    else:
+        collections = None
 
     return render(
         request,
