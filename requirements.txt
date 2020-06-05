@@ -1,4 +1,4 @@
-Django==2.2.1
+Django==2.2.13
 pytz==2019.1
 requests==2.20.1
 wikipedia==1.4.0
